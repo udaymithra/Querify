@@ -1,0 +1,124 @@
+
+:root {  /* Define variables within the :root selector for global scope */
+    --backgroundColor: #0C2D57;
+    --fontColor: #FC6736;
+    --font-size-base: 16px;
+  }
+body{
+
+
+    margin: 0px;
+}
+.hide{
+
+    display:none;
+
+}
+.visibleFlex{
+    display:flex;
+
+}
+.visibleBlock{
+    display: block;
+}
+/* Navigation Container */
+
+.postButton{
+    background:var(--fontColor);
+    border: none;
+    border-radius: 5px;;
+    padding: 5px 10px;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--backgroundColor);
+    font-weight: bold;
+    gap: 8px;
+    cursor: pointer;
+}
+.postButton img{
+    width:18px;
+}
+.navContainer{
+
+    background:var(--backgroundColor);
+    padding: 15px;
+    color:#EFECEC;
+    display: flex;
+    justify-content:space-between;
+    align-items:center;
+    
+}
+.rightHeader{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 25px;
+    
+}
+.logoutButton{
+    
+    cursor: pointer;
+}
+.box{
+
+    display: flex;
+    flex-direction: row;
+    background-color: #0C2D57;
+
+}
+.leftContainer{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0C2D57;
+    width: 70%;
+    height: 95vh;
+}
+.rightContainer{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: inherit;
+    width:30%;
+    background-color: #EFECEC;
+    border-top-left-radius: 10px;;
+
+}
+
+.errorPopUp{
+
+    background: #FFB0B0;
+    position: absolute;
+    top: -100%;
+    margin: 0px auto;
+    left: 50%;
+    display: none;
+    padding: 20px;
+    gap: 20px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    animation: down 2s ease-in-out;
+    transform: translate(-50%, -50%);
+}
+.errorMessage{
+
+    color:#A0153E;
+    font-size:20px;
+}
+.closeLogo{
+    cursor:pointer;
+}
+@keyframes down{
+
+    0%{
+        top:-100%;
+    }
+    100%{
+        top: 5%;
+    }
+}
