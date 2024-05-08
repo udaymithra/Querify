@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"  href="{{ url_for('static', filename='Images/Logo.png') }}" />
+    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -21,31 +21,46 @@
 <body>
 
     <header>
-         <nav style="background:#0C2D57; padding: 15px;color:#EFECEC;display: flex;justify-content:left;align-items:center;gap:5px;">
-            <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Querify Logo"/>&nbsp;
-            <span style="font-size: 18px;;">Querify</span>
-         </nav>
+      <nav class="navContainer" >
+        <div class="leftHeader">
+          <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+          <span style="font-size: 18px;;">Querify</span>
+        </div>
+        <div class="rightHeader">
+          <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
+          <span style="font-size:12px">Sai Kiran</span>
+     
+          <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
+          <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
+  
+        </div>
+  
+       
+      </nav>
     </header>
     
-   <div class="postContainer">
+   <div class="editorContainer">
 
      <form  method="POST" class="postFormContainer">
 
-        <label>
+        <label style="font-size: 24px;color:#0C2D57;font-weight: bold;;" for="title">
             Title
-        </label>
-        <input type="text" name="title"  />
+        </label><br>
+        <input id="title" type="text" name="title" placeholder="Enter title" required />
 
-         <input id="editorContent" type="hidden" value='' name="editor" />
-
-        <div id="editor">
-            <p>Core build with no theme, formatting, non-essential modules</p>
-        </div>
+        <input id="editorContent" type="hidden" value='' name="editor" />
        
-         <input id="submitButton" class="hide" type="submit" value="Submit" />
+        <div id="editor">
+            <p>Type your Query here.</p>
+        </div>
+        
+         <button type="submit" id="submitButton" class="hide" >Submit<img src="{{ url_for('static', filename='Images/Submit.svg') }}" ></button>
+         <!-- <input id="submitButton" class="hide" type="submit" value="Submit" /><img src="{{ url_for('static', filename='Images/Save.svg') }}" > -->
      </form>
-     <button onclick="save()">Save</button>
-   </div>
+     <button id="saveFormButton" onclick="save()">Save<img src="{{ url_for('static', filename='Images/Save.svg') }}" ></button>
+     <button id="discardFormButton" onclick="window.location.href='/'" ><img src="{{ url_for('static', filename='Images/Discard.svg') }}" > Discard</button>
+     <button id="editFormButton" onclick="edit()" class="hide" ><img src="{{ url_for('static', filename='Images/Edit.svg') }}" > Edit</button>
+    </div>
 
     <div class="errorPopUp">
       <div class="errorMessage" >The message</div>
@@ -89,14 +104,32 @@ else if(category=='True'){
 
 
   function save(){
+    
 
-    const editorContent=document.querySelector('#editorContent');
-    editorContent.value=document.querySelector('#editor').firstElementChild.innerHTML;
-    console.log(editorContent.value)
-    document.querySelector('#submitButton').setAttribute('class','visibleBlock')
+    const editorContentElement=document.querySelector('#editorContent');
+    const editorContent=document.querySelector('#editor').firstElementChild.innerHTML;
+   
+    if(editorContent === '<p>Type your Query here.</p>'){
 
+      alert('Please enter your query/content.')
+      return;
+    }
+    editorContentElement.value=document.querySelector('#editor').firstElementChild.innerHTML;
+    document.querySelector('#editFormButton').setAttribute('class','visibleFlex')
+    document.querySelector('#submitButton').setAttribute('class','visibleFlex')
+    document.querySelector('#saveFormButton').setAttribute('class','hide')
+    document.querySelector('#discardFormButton').setAttribute('class','hide')
+    document.querySelector('.ql-editor').setAttribute('contenteditable','false')
   
-  
+  }
+  function edit(){
+    document.querySelector('#submitButton').setAttribute('class','hide')
+    document.querySelector('#editFormButton').setAttribute('class','hide')
+    document.querySelector('#saveFormButton').setAttribute('class','visibleFlex')
+    document.querySelector('#discardFormButton').setAttribute('class','visibleFlex')
+    document.querySelector('.ql-editor').setAttribute('contenteditable','true')
+    
+
   }
 </script>
 </html>
