@@ -1,7 +1,7 @@
 
 :root {  /* Define variables within the :root selector for global scope */
-    --backgroundColor: #0C2D57;
-    --fontColor: #FC6736;
+    --backgroundColor: black;
+    --fontColor: #EFECEC;;
     --font-size-base: 16px;
   }
 body{
@@ -9,17 +9,33 @@ body{
 
     margin: 0px;
 }
+
+.postContent p{
+
+    margin-bottom: 1px !important;
+    color: black !important;
+}
+.postContent img{
+    width:100%;
+}
+.postContent span,strong{
+    color: black !important;
+}
 .hide{
 
-    display:none;
+    display:none !important;
 
 }
+.visibleInline{
+
+    display: inline-block !important;
+}
 .visibleFlex{
-    display:flex;
+    display:flex !important;
 
 }
 .visibleBlock{
-    display: block;
+    display: block !important;
 }
 /* Navigation Container */
 
@@ -65,7 +81,7 @@ body{
 
     display: flex;
     flex-direction: row;
-    background-color: #0C2D57;
+    background-color: var(--backgroundColor);
 
 }
 .leftContainer{
@@ -73,7 +89,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0C2D57;
+    background-color: var(--backgroundColor);
     width: 70%;
     height: 95vh;
 }
@@ -121,4 +137,250 @@ body{
     100%{
         top: 5%;
     }
+}
+
+/* Home and Posts styling */
+
+.containerHome{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px
+}
+.postContentContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    position: relative;
+    align-items: center;
+
+}
+.postContainer{
+    border: none;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;    
+  
+}
+.postHeader{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+.postContent{
+    margin-top: 15px;
+    background: #f2f4f5;
+    color: black !important;
+    padding: 10px;
+    border-radius: 10px;
+    margin-left: 0px;
+    margin-bottom: 12px;
+    height: 200px;
+    transition: height 0.5s ease-in-out;
+    overflow: hidden; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+}
+.sideLine{
+    height:200px;
+    width: 2px;
+    background: black;
+    margin-left: 10px;
+    border-radius: 10px;
+
+}
+
+.postActions{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+}
+.expanded
+{
+    height:auto !important;
+    overflow: visible;
+}
+.dateActionContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.postedDate{
+    font-size: 12px;
+    color: black;
+    font-style: italic;
+}
+.postActions img{
+    width:24px;
+    cursor: pointer;
+}
+
+
+h2{
+    font-size:24px !important;
+}
+.readMore{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+.read-more{
+    outline: none;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: #3a3a3a;
+    color:white;
+    cursor: pointer;
+}
+/* Create a post section */
+
+#title{
+
+    margin-bottom: 15px;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid black;
+    outline: none;
+    font-size: 20px;
+    font-weight: 400;
+}
+.editorContainer{
+    width: 50%;
+    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    
+    align-items: center;
+    height: 92vh;
+    position:relative;
+}
+.postFormContainer{
+    width: 100%;
+}
+#saveFormButton{
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    padding: 5px 40px;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    background:var(--backgroundColor) ;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--fontColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+#discardFormButton{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 5px 40px;
+    font-size: 20px;
+    outline: none;
+    border-radius: 8px;
+    border: 1px solid #EC4646;
+    background-color: transparent;
+    font-weight: 400;
+    color: #0C2D57;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: .5s ease;
+}
+#editFormButton{
+
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 5px 40px;
+    font-size: 20px;
+    outline: none;
+    border-radius: 8px;
+    border: 1px solid #FCDC2A;
+    background-color: transparent;
+    font-weight: 400;
+    color: #0C2D57;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: .5s ease;
+}
+#submitButton{
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    padding: 5px 40px;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    background: #D9EDBF ;
+    font-weight: bold;
+    cursor: pointer;
+    color: #0C2D57;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; 
+
+}
+#discardFormButton:hover{
+  
+    background-color: #ED6663;
+}
+#editFormButton:hover{
+    background-color: #F7F6BB;
+}
+/* styling toolbar */
+.ql-toolbar{
+
+    background: black !important;
+    border-radius: 10px !important;
+    border-bottom: none !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+
+}
+.ql-snow .ql-stroke {
+    fill: none;
+    stroke: white !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+.ql-snow .ql-picker {
+    color: white !important;
+    display: inline-block;
+    
+    font-size: 14px;
+    font-weight: 500;
+    height: 24px;
+    position: relative;
+    vertical-align: middle;
+}
+.ql-container{
+    background: #F6F5F5;
+}
+.ql-picker-options{
+
+    background-color: black !important;
 }
