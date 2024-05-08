@@ -74,7 +74,7 @@ def login():
             if check_password_hash(user.password,password):
                login_user(user,remember=True)
                print(current_user)
-               return redirect(url_for('views.home',message="Login Successful", category=True ))
+               return redirect(url_for('views.home',message="Login Successful", category=True))
             else:
                return render_template('login.html', message='Invalid Password, try again', category=False)
         else:
@@ -82,7 +82,7 @@ def login():
            return render_template('login.html', message='User not found', category=False)
     else:
        if current_user.is_authenticated:
-          return redirect(url_for('views.home',message="Login Successful", category=True ))
+          return redirect(url_for('views.home',message="Login Successful", category=True,current_user=current_user))
        else:
           return render_template('Login.html')
 
@@ -124,7 +124,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user,remember=True)
-            return redirect(url_for('views.home',message="Account created successfully!", category=True ))
+            return redirect(url_for('views.home',message="Account created successfully!", category=True,current_user=current_user))
           #return render_template('Signup.html', message="Account created successfully!", category=True )
        
     return render_template('Signup.html', text="testing")
