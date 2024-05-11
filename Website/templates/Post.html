@@ -28,7 +28,10 @@
         </div>
         <div class="rightHeader">
           <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
-          <span style="font-size:12px">Sai Kiran</span>
+          {% if current_user.is_authenticated %}
+     
+          <span style="font-size:12px"> {{ current_user.firstName }}</span>
+          {% endif %}
      
           <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
           <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
@@ -114,7 +117,7 @@ else if(category=='True'){
       alert('Please enter your query/content.')
       return;
     }
-    editorContentElement.value=document.querySelector('#editor').firstElementChild.innerHTML;
+    editorContentElement.value=editorContent;
     document.querySelector('#editFormButton').setAttribute('class','visibleFlex')
     document.querySelector('#submitButton').setAttribute('class','visibleFlex')
     document.querySelector('#saveFormButton').setAttribute('class','hide')

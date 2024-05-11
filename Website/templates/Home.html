@@ -64,9 +64,9 @@
             <img class="likesImg" style="margin-left: 30px;" data-post-id="{{ users[loop.index-1]['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/>
             
             {% endif %}
-            <img src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+            <img class="commentImg" data-post-id="{{ users[loop.index-1]['postId'] }}" src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
           </div>
-          <span class="postedDate">Posted on  {{ users[loop.index-1]['postedDate'] }}</span>
+          <span class="postedDate">Posted on  {{ item.date | time_ago }}</span>
           
         </div>
         <p class="postLikeCount" style="margin-left: 37px;">{{ users[loop.index-1]['postLikes'] }} likes</p>
@@ -141,7 +141,19 @@ socket.on('dislike_count_updated', function(data) {
 
 /*---------------------------------------------------------------------------*/
 
-  const readMoreFunction = () =>{
+
+/*-------------------------------Comment Logic------------------------------*/
+const commentImages = document.querySelectorAll('.commentImg');  // Select all images with class 'comment-image'
+
+commentImages.forEach(image => {
+    image.addEventListener('click', function() {
+        const postId =image.dataset.postId  // Extract postId from image ID
+        window.location.href = `/comment/${postId}`;  // Redirect with postId
+    });
+});
+
+/*--------------------------------------------------------------------------*/
+const readMoreFunction = () =>{
   const readMoreBtns = document.querySelectorAll('.read-more');
 
 readMoreBtns.forEach(btn => {
@@ -169,6 +181,7 @@ function readMoreHide(){
   div.style.height='auto'
   
   const height = div.offsetHeight;;
+  console.log(height)
   const parentDiv=div.parentElement.parentElement;
   div.style.height='200px'
   
