@@ -2,7 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_socketio import SocketIO
+from flask_humanize import Humanize
 
+# Initialize the extension
+humanize = Humanize()
 
 db = SQLAlchemy()
 DB_NAME='database.db'
@@ -21,7 +24,7 @@ def create_app():
     socketio = SocketIO(app)
     
 
-
+    humanize.init_app(app)
     db.init_app(app)
 
     from .views import views
@@ -62,3 +65,4 @@ def create_app():
 
 
     return app
+    
