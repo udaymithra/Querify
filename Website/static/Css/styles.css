@@ -1,7 +1,7 @@
 
 :root {  /* Define variables within the :root selector for global scope */
     --backgroundColor: black;
-    --fontColor: #EFECEC;;
+    --fontColor: #f2f4f5;;
     --font-size-base: 16px;
   }
 body{
@@ -37,6 +37,112 @@ body{
 .visibleBlock{
     display: block !important;
 }
+
+/* Comment Section  */
+#addCommentContainer{
+    width: 100%;
+    max-width: 500px;
+    padding:0px 20px 20px 20px;
+    position: relative;
+}
+#addCommentButton{
+    border-radius: 10px;
+    background-color:#3a3a3a!important;
+    padding: 5px 20px;
+    color: var(--fontColor);
+    outline: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    right: 0px;
+}
+#discardCommentButton{
+
+    border-radius: 8px;
+    background-color: #E64848;
+    border: 3px solid #C82333;
+    outline: none;
+    padding: 3px 20px;
+    cursor: pointer;
+
+}
+#saveCommentButton{
+    border-radius: 10px;
+    background-color:#3a3a3a!important;
+    padding: 5px 25px;
+    color: var(--fontColor);
+    outline: none;
+    cursor: pointer;
+
+}
+#editCommentButton{
+    
+    background-color: #FEF9A7 !important;
+    border-radius: 8px;
+    border: 3px solid #F8DE22;
+    outline: none;
+    padding: 3px 20px;
+    cursor: pointer;
+}
+.commentContainer{
+
+    width: 100%;
+    max-width: 500px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.userCommented{
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.commentContent{
+
+    padding: 10px 30px;
+    background: #f2f4f5;
+    margin: 10px 0px;
+    border-radius: 10px;
+    height: 100px;
+    overflow: hidden;
+}
+.comment{
+    margin: 10px 0px;
+}
+.replyComment{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.commentDate{
+    font-style: italic;
+    padding-left: 5px;;
+    font-size: 14px;
+}
+.read-more-comment{
+
+    cursor: pointer;
+    font-style: italic;
+    font-size:12px;
+}
+.ql-bubble{
+
+    background-color: var(--fontColor) !important;
+    border-radius: 8px !important;
+}
+.commentActionButtons
+{
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+
+
+
 /* Navigation Container */
 
 .postButton{
