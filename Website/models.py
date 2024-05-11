@@ -10,7 +10,8 @@ class Post(db.Model):
     userId=db.Column(db.Integer, db.ForeignKey('user.id'))
     title=db.Column(db.String(1000))
     content=db.Column(db.Text)
-    date=db.Column(db.DateTime(timezone=True), default=func.now())
+    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    
 
 
 
@@ -30,7 +31,6 @@ class User(db.Model, UserMixin):
 
 
 
-
 def get_user_id():
     return current_user.id if current_user.is_authenticated else None
 
@@ -38,3 +38,13 @@ class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     postId = db.Column(db.Integer, db.ForeignKey('post.id'))
     userId = db.Column(db.Integer, default=get_user_id)
+
+
+class Comments(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer)
+    postId=db.Column(db.Integer, db.ForeignKey('post.id'))
+    content=db.Column(db.Text)
+    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    
+
