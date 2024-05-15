@@ -34,6 +34,8 @@
                     <div class="form-group">
                       <label for="exampleInputPassword1">Password</label>
                       <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
+                      <img id="eyeOpen" src="{{ url_for('static', filename='Images/Eye.svg') }}" alt="">
+                      <img id="eyeClose" class="hide" src="{{ url_for('static', filename='Images/EyeClose.svg') }}" alt="">
                     </div>
                     <button type="submit" class="btn btn-primary" style="width:260px;background-color: black;color:white;font-weight: bold;text-align: center; border:2px solid #0C2D57">Submit</button>
                     <br><br><span>Don't have an account?</span>&nbsp;<a href="/signup" style="text-decoration:none;color:#0a0a0a;font-weight: bold;">Sign Up</a>
@@ -72,6 +74,31 @@ else if(category=='True'){
     popUp.style.display='none'
 
   })
+
+
+// Show & Hide Password Functionality
+const eyeOpen=document.querySelector('#eyeOpen')
+const eyeClose=document.querySelector('#eyeClose')
+
+//Show Password
+eyeOpen.addEventListener("click",function(e){
+
+  this.classList.add('hide')
+  this.parentElement.querySelector('input[type=password]').setAttribute('type','text')
+  eyeClose.classList.remove('hide')
+
+})
+
+//Hide Password
+eyeClose.addEventListener("click",function(e){
+
+this.classList.add('hide')
+this.parentElement.querySelector('input[type=text]').setAttribute('type','password')
+eyeOpen.classList.remove('hide')
+
+})
+
+
 
 
 </script>
