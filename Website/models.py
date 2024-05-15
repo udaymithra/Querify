@@ -38,7 +38,7 @@ class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     postId = db.Column(db.Integer, db.ForeignKey('post.id'))
     userId = db.Column(db.Integer, default=get_user_id)
-
+ 
 
 class Comments(db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -46,5 +46,24 @@ class Comments(db.Model):
     postId=db.Column(db.Integer, db.ForeignKey('post.id'))
     content=db.Column(db.Text)
     date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+
+class Reply(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
+    content=db.Column(db.Text)
+    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    repliedBy=db.Column(db.Text)
+    repliedTo=db.Column(db.Text)
+    postId=db.Column(db.Integer)
+    userId=db.Column(db.Integer)
+
+class CommentsLike(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
+    userId=db.Column(db.Integer)
+    
+    
+
+
     
 
