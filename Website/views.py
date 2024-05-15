@@ -97,7 +97,6 @@ def getCommentedByList(postId):
 '''
 def like_count_of_comment_by_id(userId,commentId):
     commentLikeCount=CommentsLike.query.filter_by(commentId=commentId).count()
-    print("commentLikes",commentLikeCount)
     return commentLikeCount
 def update_comment_count_by_id(userId,commentId):
     new_record=CommentsLike(commentId=commentId,userId=userId)
@@ -106,11 +105,9 @@ def update_comment_count_by_id(userId,commentId):
 
 def delete_comment_count_by_id(userId,commentId):
     record = CommentsLike.query.filter_by(commentId=commentId,userId=userId).first()
-    print("In delete section func")
     if record:
         # Only delete if the record exists and belongs to the current user
         db.session.delete(record)
-        print('removed the count')
         db.session.commit()
         return True  # Indicate successful deletion (optional)
     else:
@@ -169,16 +166,13 @@ def delete_all_posts():
 
     # Commit the changes to the database
     db.session.commit()
-    print("All posts deleted successfully!")
 def delete_all_comments():
     db.session.query(Comments).delete()
     db.session.commit()
-    print("All COmments deleted")
 
 def delete_all_replies():
     db.session.query(Reply).delete()
     db.session.commit()
-    print("All replies deleted successfully!")
 '''Delete all ends here '''
 @views.route('/post', methods=['POST','GET'])
 @login_required
