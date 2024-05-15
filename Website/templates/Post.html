@@ -27,10 +27,14 @@
           <span style="font-size: 18px;;">Querify</span>
         </div>
         <div class="rightHeader">
+          <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+          </form>
           <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
           {% if current_user.is_authenticated %}
      
-          <span style="font-size:12px"> {{ current_user.firstName }}</span>
+          <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
           {% endif %}
      
           <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>

@@ -7,14 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
 
     <title>Querify</title>
 </head>
@@ -27,10 +24,14 @@
           <span style="font-size: 18px;;">Querify</span>
         </div>
         <div class="rightHeader">
+            <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+              </form>
           <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
           {% if current_user.is_authenticated %}
      
-          <span style="font-size:12px"> {{ current_user.firstName }}</span>
+          <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
           {% endif %}
      
           <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
@@ -97,27 +98,116 @@
         <h2>Comments</h2>
          {% if lengthComments %}
             {% for comment in commentsList %}
-
-            <div class="comment">
+            
+            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
                 <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
                 <div class="commentContent">
                     {{ comment.content | safe}}
                 </div>  
                 <div class="replyComment">
-                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> Reply<span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
-                 </div>
+                    {% if current_user.is_authenticated %}
+
+                    <span>
+                      {% if commentLikedList[loop.index-1 ]%}   
+                       <img class="commentsLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% else %}
+                       <img class="commentsLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% endif %} 
+                    <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a>
+                    <span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    
+                    
+                    {% endif %} 
+                </div>
+                <div class="replyCommentLike">
+                    <span>{{ commentsLikedCount[comment.id] }} Likes</span>
+
+                    {% if comment.userId == current_user.id %}
+                    <form method="post" action="/delete/comment">
+                        <input type="hidden" name="commentId" value="{{ comment.id }}">
+                        <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                        <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                    </form>
+                    {% endif %}
+                
+                
+                </div>
 
             </div>
-              
+            {% if lengthReplies   %}
+                {% for commentId,replylist in repliesInfo.items() %}
+                    
+                     {% if commentId==comment.id %}
+
+                      {% if replylist %}  
+                         <div class="repliesContainer">
+                          <div class="sideLine"></div>
+
+                          <div class="replies">
+                          {% for reply in replylist %}
+
+                            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ reply.repliedBy }}</span></div>
+                                    <div class="commentContent">
+                                        <p>{{ reply.repliedTo }}</p>
+                                        {{ reply.content | safe}}
+                                    </div>  
+                                <div class="replyComment">
+                                    {% if current_user.is_authenticated %}
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                         {% if current_user.id == reply.userId %}
+                                         <form method="post" action="/delete/reply">
+                                            <input type="hidden" name="replyId" value="{{ reply.id }}">
+                                            <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                                            <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                                        </form>
+                                          {% endif %}   
+                                    {% endif %}
+                                </div>
+                                
+                
         
+                            </div>
+
+
+                           {% endfor %}
+                        </div>
+                        </div>
+                      {% endif %}
+
+                    {% endif %}
+                         
+                {%endfor%}
                    
-             
+             {% endif %}
             {% endfor %}
          {% else %}
             <span>No comments</span>
          {% endif %}
         
       </div>
+      <div id="replyFormContainer" class="hide">
+        <form  action="/comment/reply/" method="POST"  onsubmit="return Reply()"> 
+            <div class="replyto"> <p>@Sai Kiran Patro</p></div>
+            <div id="replyEditor">
+               
+            </div>
+            
+            <input id="replyTo" type="hidden" value="" name="replyTo">
+            <input id='replyToPostId' type="hidden" value="" name="postId">
+            <input id="replyComment" type="hidden" value='' name="replyContent" />
+            <div class="replyButtonContainer">
+                <button id="replyCommentButton" onclick="Reply()" type="submit" >Reply</button>
+            </div>
+            
+        </form>
+        
+      </div>
+
+
+
     </div>
     <div class="errorPopUp">
       <div class="errorMessage" >The message</div>
@@ -162,6 +252,12 @@ else if(category=='True'){
        
     theme: 'bubble',
   });
+
+  const quillReply= new Quill('#replyEditor', {
+    placeholder: 'Reply...',
+       
+       theme: 'bubble',
+  })
 //   const quill = new Quill('#editor',{
 //     modules:{
 //         toolbar:true
@@ -175,7 +271,7 @@ else if(category=='True'){
 
     const commentContentElement=document.querySelector('#commentContent');
     const addCommentContent=document.querySelector('#editor').firstElementChild.innerHTML;
-    console.log(addCommentContent);
+   
     if(addCommentContent === '<p>Type your Query here.</p>'){
 
       alert('Please enter your query/content.')
@@ -186,7 +282,7 @@ else if(category=='True'){
         alert('Please add your comment...')
         return;
     }
-
+   
     commentContentElement.value=addCommentContent
     document.querySelector('#editCommentButton').setAttribute('class','visibleFlex')
     document.querySelector('#addCommentButton').setAttribute('class','visibleFlex')
@@ -204,6 +300,66 @@ else if(category=='True'){
     
 
   }
+
+  function Reply(){
+
+
+       const replyContentElement=document.querySelector('#replyComment');
+       const replyEditorContent=document.querySelector('#replyEditor').firstChild.innerHTML;
+       if(replyEditorContent==='<p><br></p>'){
+
+        alert('Add reply...');
+        return false;
+       }
+       else{
+
+        const replyEditorContent=document.querySelector('#replyEditor').firstElementChild.innerHTML;
+        console.log("reply content", replyEditorContent);
+        const replyingTo=document.querySelector('.replyto').firstElementChild.textContent;
+        console.log(replyingTo); 
+        document.querySelector('#replyTo').value=replyingTo; 
+        document.querySelector('#replyComment').value=replyEditorContent; 
+        return true;
+    }
+       
+       replyContentElement.value=replyEditorContent
+
+  }
+
+  function activateReply(){
+
+    document.querySelectorAll('.replyToComment').forEach((replyButton)=>{
+
+        replyButton.addEventListener('click',function(){
+
+           
+
+  
+            //Enabling reply container
+            const replyFormContainer=document.querySelector("#replyFormContainer")
+            replyFormContainer.setAttribute('class','visibleBlock')
+            const commentId=replyButton.getAttribute('data-comment-id')
+            replyFormContainer.firstElementChild.setAttribute('action',`/comment/reply/${commentId}`)
+            document.querySelector(".replyto").firstElementChild.textContent='@'+replyButton.getAttribute('data-reply-to')
+            document.querySelector("#replyToPostId").value=replyButton.getAttribute('data-post-id')
+
+             //scroll to that reply action 
+            replyFormContainer.scrollIntoView({ behavior: "smooth" })
+        })
+
+    })
+  }
+  activateReply()
+
+
+/// set side line height for replies
+
+document.querySelectorAll('.repliesContainer').forEach((replyContainer)=>{
+ 
+   const repliesHeight=Math.round(replyContainer.querySelector('.replies').offsetHeight)+'px'
+   replyContainer.querySelector('.sideLine').style.height=repliesHeight
+
+})
 
 // Read More Functionality for Comments
 const readMoreComment = () =>{
@@ -361,6 +517,70 @@ socket.on('dislike_count_updated', function(data) {
   // Update the count only if it matches the expected post ID (implement logic here)
   if (img.dataset.postId==postId) {
      img.parentElement.parentElement.parentElement.querySelector('.postLikeCount').innerText = count + ' likes';
+  }
+})});
+
+
+
+
+
+/* Real Time Like Count Update of Comment */
+
+var socket2 = io();
+
+
+// Like the post 
+document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+  img.addEventListener('click',()=>{
+   
+    const userId = img.dataset.userId;   // Access data-user-id using dataset property
+    const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+    socket2.emit('like_update_comment_count', { user_id:  userId, comment_id:commentId });
+    img.classList.remove('visibleInline')
+    img.classList.add('hide')
+    img.parentElement.querySelector('.commentsDisLikesImg').classList.add('visibleInline')
+  })
+})
+
+
+socket2.on('like_update_comment_count', function(data) {
+    const commentId = data.comment_id;
+    const count = data.count;
+    document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+
+    // Update the count only if it matches the expected post ID (implement logic here)
+    if (img.dataset.commentId==commentId) {
+       img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
+    }
+})});
+
+//Dislike the post 
+document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+img.addEventListener('click',()=>{
+
+  const userId = img.dataset.userId;   // Access data-user-id using dataset property
+  const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+  socket2.emit('dislike_update_comment_count', { user_id:  userId, comment_id:commentId });
+  img.classList.remove('visibleInline')
+  img.classList.add('hide')
+  img.parentElement.querySelector('.commentsLikesImg').classList.add('visibleInline')
+
+})
+})
+
+
+socket2.on('dislike_update_comment_count', function(data) {
+  const commentId = data.comment_id;;
+  const count = data.count;
+  document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+
+  // Update the count only if it matches the expected post ID (implement logic here)
+  if (img.dataset.commentId===commentId) {
+     img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
   }
 })});
 
