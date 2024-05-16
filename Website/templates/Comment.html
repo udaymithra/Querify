@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
+
+    <title>Querify</title>
+</head>
+<body>
+
+    <header>
+      <nav class="navContainer" >
+        <div class="leftHeader">
+          <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+          <span style="font-size: 18px;;">Querify</span>
+        </div>
+        <div class="rightHeader">
+            <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+              </form>
+          <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
+          {% if current_user.is_authenticated %}
+     
+          <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
+          {% endif %}
+     
+          <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
+          <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
+  
+        </div>
+  
+       
+      </nav>
+    </header>
+    <div class="containerHome">
+
+
+  
+     <div class="postContainer">
+     
+        <div class="postHeader"><img src="{{ url_for('static', filename='Images/User.svg')}}"/> <span>{{ userPostInfo['userFullName'] }}</span></div>
+        <div class="postContentContainer">
+
+          <div class="sideLine"></div>
+          <div class="postContent">
+            <h2>{{ postDetails.title }}</h2>
+            {{ postDetails.content | safe }}
+          
+          </div>
+        </div>
+        
+        <div class="readMore">
+           <button class="read-more">Read More</button>
+        </div>
+        <div class="dateActionContainer">
+          <div class="postActions">
+            {% if userPostInfo['postLiked'] %}
+            <img class="disLikesImg" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+            <img class="likesImg hide" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/>
+            {% else %}
+            <img class="disLikesImg hide" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+            <img class="likesImg" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/>
+            
+            {% endif %}
+            <img class="commentImg" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+          </div>
+          <span class="postedDate">Posted on  {{ userPostInfo['postedDate'] }}</span>
+          
+        </div>
+        <p class="postLikeCount" style="margin-left: 37px;">{{ userPostInfo['postLikes'] }} likes</p>
+      </div>
+
+      <div id="addCommentContainer">
+            <form  method="POST" > 
+                <div id="editor"></div>
+                <input id="commentContent" type="hidden" value='' name="comment" />
+                <button id="addCommentButton" type="submit" class="hide">Add Comment</button>
+            </form>
+             
+             <div class="commentActionButtons">
+                <button id="discardCommentButton" onclick="window.location.href='/'" type="button"  class=""><img src="{{ url_for('static', filename='images/DiscardRed.svg')}}"></button>
+                <button id="saveCommentButton" onclick="save()" type="button" class="">Save</button>
+                <button id="editCommentButton" onclick="edit()" type="button"  class="hide"><img src="{{ url_for('static', filename='images/Edit.svg')}}"></button>
+              
+             </div>
+      </div>
+      <div class="commentContainer">
+        <h2>Comments</h2>
+         {% if lengthComments %}
+            {% for comment in commentsList %}
+            
+            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
+                <div class="commentContent">
+                    {{ comment.content | safe}}
+                </div>  
+                <div class="replyComment">
+                    {% if current_user.is_authenticated %}
+
+                    <span>
+                      {% if commentLikedList[loop.index-1 ]%}   
+                       <img class="commentsLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% else %}
+                       <img class="commentsLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% endif %} 
+                    <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a>
+                    <span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    
+                    
+                    {% endif %} 
+                </div>
+                <div class="replyCommentLike">
+                    <span>{{ commentsLikedCount[comment.id] }} Likes</span>
+
+                    {% if comment.userId == current_user.id %}
+                    <form method="post" action="/delete/comment">
+                        <input type="hidden" name="commentId" value="{{ comment.id }}">
+                        <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                        <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                    </form>
+                    {% endif %}
+                
+                
+                </div>
+
+            </div>
+            {% if lengthReplies   %}
+                {% for commentId,replylist in repliesInfo.items() %}
+                    
+                     {% if commentId==comment.id %}
+
+                      {% if replylist %}  
+                         <div class="repliesContainer">
+                          <div class="sideLine"></div>
+
+                          <div class="replies">
+                          {% for reply in replylist %}
+
+                            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ reply.repliedBy }}</span></div>
+                                    <div class="commentContent">
+                                        <p>{{ reply.repliedTo }}</p>
+                                        {{ reply.content | safe}}
+                                    </div>  
+                                <div class="replyComment">
+                                    {% if current_user.is_authenticated %}
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                         {% if current_user.id == reply.userId %}
+                                         <form method="post" action="/delete/reply">
+                                            <input type="hidden" name="replyId" value="{{ reply.id }}">
+                                            <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                                            <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                                        </form>
+                                          {% endif %}   
+                                    {% endif %}
+                                </div>
+                                
+                
+        
+                            </div>
+
+
+                           {% endfor %}
+                        </div>
+                        </div>
+                      {% endif %}
+
+                    {% endif %}
+                         
+                {%endfor%}
+                   
+             {% endif %}
+            {% endfor %}
+         {% else %}
+            <span>No comments</span>
+         {% endif %}
+        
+      </div>
+      <div id="replyFormContainer" class="hide">
+        <form  action="/comment/reply/" method="POST"  onsubmit="return Reply()"> 
+            <div class="replyto"> <p>@Sai Kiran Patro</p></div>
+            <div id="replyEditor">
+               
+            </div>
+            
+            <input id="replyTo" type="hidden" value="" name="replyTo">
+            <input id='replyToPostId' type="hidden" value="" name="postId">
+            <input id="replyComment" type="hidden" value='' name="replyContent" />
+            <div class="replyButtonContainer">
+                <button id="replyCommentButton" onclick="Reply()" type="submit" >Reply</button>
+            </div>
+            
+        </form>
+        
+      </div>
+
+      <div class="mobSearchBar">
+        <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+        <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
+        </form>
+       </div>
+      <div class="mobNav">
+        <a href="/" alias="Home"><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+        <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+        <a href="/post" alias="Post"><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
+        <a href="/profile" alias="Profile"><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
+  
+      </div>  
+
+    </div>
+    <div class="errorPopUp">
+      <div class="errorMessage" >The message</div>
+      <img class="closeLogo" src="{{ url_for('static', filename='Images/Close.svg') }}">
+  </div>
+
+ 
+  
+</body>
+<script>
+
+
+
+
+
+let message= '{{ message }}'
+let category= '{{ category }}'
+console.log(category)
+
+console.log('{{ commentsList }}')
+const popUp=document.querySelector('.errorPopUp')
+if(category=='False'){
+  
+ 
+  popUp.style.top='5%';
+  popUp.style.display='flex';
+  document.querySelector('.errorMessage').innerHTML=message;
+  }
+else if(category=='True'){
+  popUp.style.top='5%';
+  popUp.style.background='#C6EBC5'
+  popUp.style.display='flex';
+  document.querySelector('.errorMessage').innerHTML=message;
+  document.querySelector('.errorMessage').style.color='#76885B'
+}
+  document.querySelector('.closeLogo').addEventListener("click",()=>{
+    popUp.style.display='none'
+
+  })
+  const quill = new Quill('#editor', {
+    placeholder: 'Add a comment...',
+       
+    theme: 'bubble',
+  });
+
+  const quillReply= new Quill('#replyEditor', {
+    placeholder: 'Reply...',
+       
+       theme: 'bubble',
+  })
+//   const quill = new Quill('#editor',{
+//     modules:{
+//         toolbar:true
+//     },
+//     theme:"snow"
+//   });
+
+
+  function save(){
+    
+
+    const commentContentElement=document.querySelector('#commentContent');
+    const addCommentContent=document.querySelector('#editor').firstElementChild.innerHTML;
+   
+    if(addCommentContent === '<p>Type your Query here.</p>'){
+
+      alert('Please enter your query/content.')
+      return;
+    }
+    else if(addCommentContent ==='<p><br></p>')
+    {
+        alert('Please add your comment...')
+        return;
+    }
+   
+    commentContentElement.value=addCommentContent
+    document.querySelector('#editCommentButton').setAttribute('class','visibleFlex')
+    document.querySelector('#addCommentButton').setAttribute('class','visibleFlex')
+    document.querySelector('#saveCommentButton').setAttribute('class','hide')
+    document.querySelector('#discardCommentButton').setAttribute('class','hide')
+    document.querySelector('.ql-editor').setAttribute('contenteditable','false')
+  
+  }
+  function edit(){
+    document.querySelector('#addCommentButton').setAttribute('class','hide')
+    document.querySelector('#editCommentButton').setAttribute('class','hide')
+    document.querySelector('#saveCommentButton').setAttribute('class','visibleFlex')
+    document.querySelector('#discardCommentButton').setAttribute('class','visibleFlex')
+    document.querySelector('.ql-editor').setAttribute('contenteditable','true')
+    
+
+  }
+
+  function Reply(){
+
+
+       const replyContentElement=document.querySelector('#replyComment');
+       const replyEditorContent=document.querySelector('#replyEditor').firstChild.innerHTML;
+       if(replyEditorContent==='<p><br></p>'){
+
+        alert('Add reply...');
+        return false;
+       }
+       else{
+
+        const replyEditorContent=document.querySelector('#replyEditor').firstElementChild.innerHTML;
+        console.log("reply content", replyEditorContent);
+        const replyingTo=document.querySelector('.replyto').firstElementChild.textContent;
+        console.log(replyingTo); 
+        document.querySelector('#replyTo').value=replyingTo; 
+        document.querySelector('#replyComment').value=replyEditorContent; 
+        return true;
+    }
+       
+       replyContentElement.value=replyEditorContent
+
+  }
+
+  function activateReply(){
+
+    document.querySelectorAll('.replyToComment').forEach((replyButton)=>{
+
+        replyButton.addEventListener('click',function(){
+
+           
+
+  
+            //Enabling reply container
+            const replyFormContainer=document.querySelector("#replyFormContainer")
+            replyFormContainer.setAttribute('class','visibleBlock')
+            const commentId=replyButton.getAttribute('data-comment-id')
+            replyFormContainer.firstElementChild.setAttribute('action',`/comment/reply/${commentId}`)
+            document.querySelector(".replyto").firstElementChild.textContent='@'+replyButton.getAttribute('data-reply-to')
+            document.querySelector("#replyToPostId").value=replyButton.getAttribute('data-post-id')
+
+             //scroll to that reply action 
+            replyFormContainer.scrollIntoView({ behavior: "smooth" })
+        })
+
+    })
+  }
+  activateReply()
+
+
+/// set side line height for replies
+
+document.querySelectorAll('.repliesContainer').forEach((replyContainer)=>{
+ 
+   const repliesHeight=Math.round(replyContainer.querySelector('.replies').offsetHeight)+'px'
+   replyContainer.querySelector('.sideLine').style.height=repliesHeight
+
+})
+
+// Read More Functionality for Comments
+const readMoreComment = () =>{
+  const readMoreBtns = document.querySelectorAll('.read-more-comment');
+
+readMoreBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+
+        const content = this.parentElement.parentElement.querySelector('.commentContent');
+       
+        content.classList.toggle('expanded');
+       
+        if (content.classList.contains('expanded')) {
+            this.textContent = 'Read Less';
+            
+        } else {
+            this.textContent = 'Read More';
+           }
+    });
+});
+}
+function readMoreCommentHide(){
+
+  const myDiv = document.querySelectorAll(".commentContent");
+  myDiv.forEach((div)=>{
+  div.style.height='auto'
+  
+  const height = div.offsetHeight;;
+  console.log(height)
+  const parentDiv=div.parentElement;
+  div.style.height='100px'
+  
+  if(Math.round(height)>100){
+   
+    parentDiv.querySelector('.replyComment').querySelector('.read-more-comment').setAttribute('class', 'read-more-comment');
+    
+  }
+  else {
+    parentDiv.querySelector('.replyComment').querySelector('.read-more-comment').classList.add('hide');
+   
+  }
+ 
+
+})
+ readMoreComment()
+
+}
+
+
+readMoreCommentHide()
+
+
+/*  Read More Function for Post  */
+  const readMorePost = () =>{
+  const readMoreBtns = document.querySelectorAll('.read-more');
+
+readMoreBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+
+        const content = this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.postContent');
+       
+        content.classList.toggle('expanded');
+       
+        if (content.classList.contains('expanded')) {
+            this.textContent = 'Read Less';
+            this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.sideLine').style.height=Math.round(this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.postContent').offsetHeight)+'px'
+           
+        } else {
+            this.textContent = 'Read More';
+            this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.sideLine').style.height='200px'
+        }
+    });
+});
+}
+function readMorePostHide(){
+
+  const myDiv = document.querySelectorAll(".postContent");
+  myDiv.forEach((div)=>{
+  div.style.height='auto'
+  
+  const height = div.offsetHeight;;
+  console.log(height)
+  const parentDiv=div.parentElement.parentElement;
+  div.style.height='200px'
+  
+  if(Math.round(height)>200){
+   
+    parentDiv.querySelector('.read-more').setAttribute('class', 'read-more');
+    
+  }
+  else{
+    parentDiv.querySelector('.read-more').classList.add('hide');
+   
+  }
+ 
+
+})
+ readMorePost()
+
+}
+
+
+readMorePostHide()
+//  real-time likes dislikes functionality 
+var socket = io();
+
+
+// Like the post 
+document.querySelectorAll('.likesImg').forEach((img)=>{
+
+  img.addEventListener('click',()=>{
+
+    const postId = img.dataset.postId;  // Access data-post-id using dataset property
+    socket.emit('like_update_count', { post_id: postId });
+    img.classList.remove('visibleInline')
+    img.classList.add('hide')
+    img.parentElement.querySelector('.disLikesImg').classList.add('visibleInline')
+  })
+})
+
+
+socket.on('like_count_updated', function(data) {
+    const postId = data.post_id;
+    const count = data.count;
+    document.querySelectorAll('.likesImg').forEach((img)=>{
+
+
+    // Update the count only if it matches the expected post ID (implement logic here)
+    if (img.dataset.postId==postId) {
+       img.parentElement.parentElement.parentElement.querySelector('.postLikeCount').innerText = count + ' likes';
+    }
+})});
+
+//Dislike the post 
+document.querySelectorAll('.disLikesImg').forEach((img)=>{
+
+img.addEventListener('click',()=>{
+
+  const postId = img.dataset.postId;  // Access data-post-id using dataset property
+  socket.emit('dislike_update_count', { post_id: postId });
+  img.classList.remove('visibleInline')
+  img.classList.add('hide')
+  img.parentElement.querySelector('.likesImg').classList.add('visibleInline')
+
+})
+})
+
+
+socket.on('dislike_count_updated', function(data) {
+  const postId = data.post_id;
+  const count = data.count;
+  document.querySelectorAll('.disLikesImg').forEach((img)=>{
+
+
+  // Update the count only if it matches the expected post ID (implement logic here)
+  if (img.dataset.postId==postId) {
+     img.parentElement.parentElement.parentElement.querySelector('.postLikeCount').innerText = count + ' likes';
+  }
+})});
+
+
+
+
+
+/* Real Time Like Count Update of Comment */
+
+var socket2 = io();
+
+
+// Like the post 
+document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+  img.addEventListener('click',()=>{
+   
+    const userId = img.dataset.userId;   // Access data-user-id using dataset property
+    const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+    socket2.emit('like_update_comment_count', { user_id:  userId, comment_id:commentId });
+    img.classList.remove('visibleInline')
+    img.classList.add('hide')
+    img.parentElement.querySelector('.commentsDisLikesImg').classList.add('visibleInline')
+  })
+})
+
+
+socket2.on('like_update_comment_count', function(data) {
+    const commentId = data.comment_id;
+    const count = data.count;
+    document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+
+    // Update the count only if it matches the expected post ID (implement logic here)
+    if (img.dataset.commentId==commentId) {
+       img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
+    }
+})});
+
+//Dislike the post 
+document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+img.addEventListener('click',()=>{
+
+  const userId = img.dataset.userId;   // Access data-user-id using dataset property
+  const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+  socket2.emit('dislike_update_comment_count', { user_id:  userId, comment_id:commentId });
+  img.classList.remove('visibleInline')
+  img.classList.add('hide')
+  img.parentElement.querySelector('.commentsLikesImg').classList.add('visibleInline')
+
+})
+})
+
+
+socket2.on('dislike_update_comment_count', function(data) {
+  const commentId = data.comment_id;;
+  const count = data.count;
+  document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+
+  // Update the count only if it matches the expected post ID (implement logic here)
+  if (img.dataset.commentId===commentId) {
+     img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
+  }
+})});
+
+
+</script>
+</html>
