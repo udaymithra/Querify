@@ -40,7 +40,7 @@
 </header>
  <div class="containerHome">
      
- 
+    {% if all_posts %}
     {% for item in all_posts %}
     
       <div class="postContainer">
@@ -80,6 +80,25 @@
         </div>
       </div>
       {% endfor %}
+    {% else %}
+       <img id="noPosts" src="{{ url_for('static', filename='Images/NoPosts.jpg')}}" alt="No Posts">
+       <p>No Posts</p>
+    {% endif %}
+    
+     <div class="mobSearchBar">
+      <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+      <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+        <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
+      </form>
+     </div>
+    <div class="mobNav">
+      <a href="/" alias="Home"><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+      <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+      <a href="/post" alias="Post"><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
+      <a href="/profile" alias="Profile"><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
+
+    </div>  
  </div>
     <div class="errorPopUp">
         <div class="errorMessage" >The message</div>
@@ -242,6 +261,19 @@ readMoreHide()
     
       })
     
-    
+    // Mob Search Button (main script)
+    document.querySelector('#searchMob').addEventListener("click",()=>{
+
+      document.querySelector('.mobNav').style.display='none'
+      document.querySelector('.mobSearchBar').style.display="flex"
+      document.querySelector('.mobSearchBar').style.opacity="1"
+
+    })
+    document.querySelector('#backMob').addEventListener("click",()=>{
+
+      document.querySelector('.mobNav').style.display='flex'
+      document.querySelector('.mobSearchBar').style.opacity="0"
+      document.querySelector('.mobSearchBar').style.display="none"
+    })
     </script>
 </html>  

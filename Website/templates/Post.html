@@ -68,6 +68,22 @@
      <button id="discardFormButton" onclick="window.location.href='/'" ><img src="{{ url_for('static', filename='Images/Discard.svg') }}" > Discard</button>
      <button id="editFormButton" onclick="edit()" class="hide" ><img src="{{ url_for('static', filename='Images/Edit.svg') }}" > Edit</button>
     </div>
+    <div class="containerHome">
+      <div class="mobSearchBar">
+        <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+        <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
+        </form>
+       </div>
+      <div class="mobNav">
+        <a href="/" alias="Home"><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+        <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+        <a href="/post" alias="Post"><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
+        <a href="/profile" alias="Profile"><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
+  
+      </div>  
+    </div>
 
     <div class="errorPopUp">
       <div class="errorMessage" >The message</div>
