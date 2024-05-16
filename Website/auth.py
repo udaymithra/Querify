@@ -1,8 +1,9 @@
 import re
 from flask import Blueprint, render_template,  request, redirect, url_for
+from .models import User
+from . import db   
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required,logout_user,current_user
-
 def is_valid_email(email):
  
 
@@ -61,7 +62,29 @@ def is_valid_password(password):
 @auth.route('/login', methods=['GET', 'POST'])
 
 def login():
-    return render_template('Login.html')
+    if request.method == 'POST':
+
+        data = request.form
+        print(data)
+
+        emailAddress=data.get('email')
+        password=data.get('password')
+        user=User.query.filter_by(emailAddress=emailAddress).first()
+        if user:
+            if check_password_hash(user.password,password):
+               login_user(user,remember=True)
+               print(current_user)
+               return redirect(url_for('views.home',message="Login Successful", category=True))
+            else:
+               return render_template('login.html', message='Invalid Password, try again', category=False)
+        else:
+           print("user not found")
+           return render_template('login.html', message='User not found', category=False)
+    else:
+       if current_user.is_authenticated:
+          return redirect(url_for('views.home',message="Login Successful", category=True,current_user=current_user))
+       else:
+          return render_template('Login.html')
 
 
 @auth.route('/logout')
@@ -72,4 +95,36 @@ def logout():
 @auth.route('/signup',methods=['GET', 'POST'])
 
 def signup():
-    return render_template('Signup.html')
+    print("signup called")
+    if request.method == 'POST':
+       data= request.form
+       firstName=data.get('firstName')
+       lastName=data.get('lastName')
+       emailAddress=data.get('email')
+       password1=data.get('password1')
+       password2=data.get('password2')
+
+
+       if(len(firstName)<2) :
+          return render_template('Signup.html', message="First name must be at least 2 characters" , category=False)
+       elif(is_valid_email(emailAddress)==False):
+          return render_template('Signup.html', message="Invalid Email Address", category=False)
+       elif (password1!=password2):
+          return render_template('Signup.html', message="Confirm Password doesn't match", category=False)
+       elif(is_valid_password(password1)==False):
+            return render_template('Signup.html', message="Password requires at least 8 characters long and contains at least one uppercase letter, lowercase letter, number, and special character ", category=False)
+       
+       else:
+          
+          user=User.query.filter_by(emailAddress=emailAddress).first()
+          if user:
+             return render_template('Signup.html', message="Email Address already in use", category=False)
+          else:
+            new_user= User(emailAddress=emailAddress, firstName=firstName, lastName=lastName, password=generate_password_hash(password1, method='pbkdf2:sha256'))
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user,remember=True)
+            return redirect(url_for('views.home',message="Account created successfully!", category=True,current_user=current_user))
+          #return render_template('Signup.html', message="Account created successfully!", category=True )
+       
+    return render_template('Signup.html', text="testing")
