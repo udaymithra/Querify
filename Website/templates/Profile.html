@@ -1,170 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
-    <title>Querify</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="{{ url_for('static', filename='Images/favicon.ico') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+  <script src="{{ url_for('static',filename='Scripts/Profile.js') }}"  defer ></script>
+  <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}"  defer ></script>
+  <title>Querify</title>
 </head>
+
 <body>
   <header>
-    <nav class="navContainer" >
+    <nav class="navContainer">
       <div class="leftHeader">
-        <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+        <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo" />&nbsp;
         <span style="font-size: 18px;;">Querify</span>
       </div>
       <div class="rightHeader">
         <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
-            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-          </form>
-        <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <button class="postButton" onclick="window.location.href='/post'"><img
+            src="{{ url_for('static', filename='Images/Post.svg')}}" alt="Post Button" />Post</button>
         {% if current_user.is_authenticated %}
-     
+
         <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
         {% endif %}
-        <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
-        <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
+        <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon" />
+        <img class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}"
+          onclick="window.location.href='/logout'" />
 
       </div>
 
-     
+
     </nav>
-</header>
- <div class="profileContainer">
+  </header>
+  <div class="profileContainer">
     <div class="profileDetailsContainer">
-         <div class="profilePic">
-            <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
-         </div>
-         <div class="profileDetails">
-            <form action="" method="POST"> 
+      <div class="profilePic">
+        <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon" />
+      </div>
+      <div class="profileDetails">
+        <form action="" method="POST">
 
-                <div class="profileDetailContainer"><span>First Name</span> <input type="text" value="{{ userDetails.firstName }}" name="firstName" readonly> <img class="profileEditButton" src="{{ url_for('static', filename='Images/profileEdit.svg')}}" alt="Edit First Name"/> </div>
-                <div class="profileDetailContainer"><span>Last Name</span> <input type="text" value="{{ userDetails.lastName }}" name="lastName" readonly> <img class="profileEditButton" src="{{ url_for('static', filename='Images/profileEdit.svg')}}" alt="Edit Last Name"/> </div>
-                <div class="saveProfile">
-                    <button id="saveProfile" type="submit" class="btn btn-outline-light hide">Save </button>
-                </div>
-              
+          <div class="profileDetailContainer"><span>First Name</span> <input type="text"
+              value="{{ userDetails.firstName }}" name="firstName" readonly> <img class="profileEditButton"
+              src="{{ url_for('static', filename='Images/profileEdit.svg')}}" alt="Edit First Name" /> </div>
+          <div class="profileDetailContainer"><span>Last Name</span> <input type="text"
+              value="{{ userDetails.lastName }}" name="lastName" readonly> <img class="profileEditButton"
+              src="{{ url_for('static', filename='Images/profileEdit.svg')}}" alt="Edit Last Name" /> </div>
+          <div class="saveProfile">
+            <button id="saveProfile" type="submit" class="btn btn-outline-light hide">Save </button>
+          </div>
 
-            </form>
-            <div class="profileDetailContainer" id="profileEmailId"><span>Email Address</span> &nbsp;{{ userDetails.emailAddress }}  </div>
-            <div class="profileDetailContainer" id='postCounts'><span>Posts</span> &nbsp;{{ postsCount}}  </div>
 
-            
-            
+        </form>
+        <div class="profileDetailContainer" id="profileEmailId"><span>Email Address</span>
+          &nbsp;{{ userDetails.emailAddress }} </div>
+        <div class="profileDetailContainer" id='postCounts'><span>Posts</span> &nbsp;{{ postsCount}} </div>
 
-             
-         </div>
+
+
+
+
+      </div>
     </div>
     <div class="profilePosts">
 
-        {% if postsCount %}
-        {% for val in userPosts %}
-      
-       
-          <div class="postCard">
-            <img src="{{ url_for('static', filename='Images/profilePost.svg')}}" alt="Post Pic"/>
-            <div class="profilePostTitle">{{ val['postTitle'] }}</div>
-            <div class="profilePostContent"> {{ val['postContent'] | safe }}</div>
-            <div class="profilePostActions">
-                
-                <button class=" postDeleteButton" type="button" data-post-id="{{ val['postId'] }}"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
-                <a href="comment/{{ val['postId'] }}">View</a>
-                
-            </div>
-          </div>
-      
-      
-        {% endfor %}
+      {% if postsCount %}
+      {% for val in userPosts %}
 
-        {% else %}
-             <div class="noPosts">
-                    
-                  <img src="{{ url_for('static', filename='Images/noPosts.svg')}}" alt="No Posts" />
-                   <p>No Posts</p>
-                
-             </div>
-         {% endif %}
+
+      <div class="postCard">
+        <img src="{{ url_for('static', filename='Images/profilePost.svg')}}" alt="Post Pic" />
+        <div class="profilePostTitle">{{ val['postTitle'] }}</div>
+        <div class="profilePostContent"> {{ val['postContent'] | safe }}</div>
+        <div class="profilePostActions">
+
+          <button class=" postDeleteButton" type="button" data-post-id="{{ val['postId'] }}"><img
+              src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" alt="Delete Post"></button>
+          <a href="comment/{{ val['postId'] }}">View</a>
+
+        </div>
       </div>
-      <div class="containerHome">
-        <div class="mobSearchBar">
-            <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
-            <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
-              <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
-            </form>
-           </div>
-          <div class="mobNav">
-            <a href="/" alias="Home"><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
-            <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
-            <a href="/post" alias="Post"><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
-            <a href="/profile" alias="Profile"><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
-        
-          </div> 
-    
+
+
+      {% endfor %}
+
+      {% else %}
+      <div class="noPosts">
+
+        <img src="{{ url_for('static', filename='Images/noPosts.svg')}}" alt="No Posts" />
+        <p>No Posts</p>
+
       </div>
- </div>
-   
-  <div class="deleteConfirmationContainer hide">
-    <div class="deleteMessage">
-        <p>Are you sure you want to delete this post?</p>
+      {% endif %}
     </div>
-    <div class="deleteForm">
-        <form action="/delete" method="POST"> 
-            
-            <input type="hidden" id="postIdField" name="postId" value="">
-            
-            <button type="button" id="postIdNo" class="btn btn-dark">No</button>
-            <button type="submit" class="btn btn-danger">Yes</button>
-
+    <div class="containerHome">
+      <div class="mobSearchBar">
+        <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+        <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img
+              src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
         </form>
+      </div>
+      <div class="mobNav">
+        <a href="/" ><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+        <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+        <a href="/post" ><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post">
+        </a>
+        <a href="/profile" ><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}"
+            alt="Profile"> </a>
+
+      </div>
+
     </div>
   </div>
-  
-  
- 
+
+  <div class="deleteConfirmationContainer hide">
+    <div class="deleteMessage">
+      <p>Are you sure you want to delete this post?</p>
+    </div>
+    <div class="deleteForm">
+      <form action="/delete" method="POST">
+
+        <input type="hidden" id="postIdField" name="postId" value="">
+
+        <button type="button" id="postIdNo" class="btn btn-dark">No</button>
+        <button type="submit" class="btn btn-danger">Yes</button>
+
+      </form>
+    </div>
+  </div>
+
+
+
 </body>
 
-
-<script>
-
-    // Profile Details Edit Functionality
-   document.querySelectorAll('.profileEditButton').forEach((editButton)=>{
-
-
-    editButton.addEventListener('click',function(e){
-
-    document.querySelector('#saveProfile').classList.remove('hide')
-
-    this.parentElement.querySelectorAll('input').forEach((input)=>{
-        input.removeAttribute('readonly')
-        input.focus()
-    })
-    })
-   })
-
-   //Post Delete Functionality
-   document.querySelectorAll('.postDeleteButton').forEach((deleteButton)=>{
-
-    deleteButton.addEventListener('click',function(e){
-      const postIdField=document.getElementById('postIdField')
-      postIdField.value=this.dataset.postId
-      const deleteConfirmationContainer=document.querySelector('.deleteConfirmationContainer')
-      deleteConfirmationContainer.classList.remove('hide')
-      document.querySelector('#postIdNo').addEventListener('click',function(e){
-        postIdField.value=""
-        deleteConfirmationContainer.classList.add('hide')
-
-      })
-
-    })
-   })
-
-</script>
 </html>
