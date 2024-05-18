@@ -23,7 +23,7 @@ from sqlalchemy import func
   11.update_comment_count_by_id(userId,commentId)->Updates the like count for a specific comment.
   12.delete_comment_count_by_id(userId,commentId)->Decrement the like count for a specific comment.
   13.get_user_details(userId)->Fetches the users complete information for profile page rendering.
-  14.get_user_id()->Returns the current user id.
+  14.get_user_id()->Returns the current user id.    
 
 
 
@@ -206,10 +206,8 @@ def comment(post_id):
         commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(postId)
         userCommentedByList=getCommentedByList(postId)
         return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
-
     
     return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
-
 
 #Reply Route of a comment for a specific post
 @views.route('/comment/reply/<int:comment_id>', methods=['POST'])
