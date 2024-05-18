@@ -23,7 +23,7 @@ from sqlalchemy import func
   11.update_comment_count_by_id(userId,commentId)->Updates the like count for a specific comment.
   12.delete_comment_count_by_id(userId,commentId)->Decrement the like count for a specific comment.
   13.get_user_details(userId)->Fetches the users complete information for profile page rendering.
-  14.get_user_id()->Returns the current user id.    
+  14.get_user_id()->Returns the current user id.
 
 
 
@@ -170,10 +170,13 @@ def post():
         data=request.form
         title=data.get('title')
         editorContent=data.get('editor')
-        now_utc = datetime.datetime.utcnow()
+        perth_tz = timezone('Australia/Perth')
+        # Get the current time in UTC
+        utc_now = datetime.datetime.utcnow()
+
         # Convert UTC time to user's region time zone
-        user_tz = timezone('Asia/Kolkata')
-        now_user_region = now_utc.astimezone(user_tz)
+        user_tz = perth_tz
+        now_user_region = utc_now.astimezone(user_tz)
         new_post=Post(userId=current_user.id, title=title,content=editorContent,date=now_user_region)
         db.session.add(new_post)
         db.session.commit()        
@@ -195,10 +198,13 @@ def comment(post_id):
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
         commentContent=data.get('comment')
-        now_utc = datetime.datetime.utcnow()
+        perth_tz = timezone('Australia/Perth')
+        # Get the current time in UTC
+        utc_now = datetime.now(timezone('UTC'))
+
         # Convert UTC time to user's region time zone
-        user_tz = timezone('Asia/Kolkata')
-        now_user_region = now_utc.astimezone(user_tz)
+        user_tz = perth_tz
+        now_user_region = utc_now.astimezone(user_tz)
         new_comment=Comments(userId=userId,postId=postId,content=commentContent,date=now_user_region)
         db.session.add(new_comment)
         db.session.commit()
@@ -206,8 +212,10 @@ def comment(post_id):
         commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(postId)
         userCommentedByList=getCommentedByList(postId)
         return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
+
     
     return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
+
 
 #Reply Route of a comment for a specific post
 @views.route('/comment/reply/<int:comment_id>', methods=['POST'])
@@ -222,11 +230,13 @@ def reply(comment_id):
         replyContent=data.get('replyContent')
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
-        now_utc = datetime.datetime.utcnow()
+        perth_tz = timezone('Australia/Perth')
+        # Get the current time in UTC
+        utc_now = datetime.now(timezone('UTC'))
         # Convert UTC time to user's region time zone
-        user_tz = timezone('Asia/Kolkata')
-        date = now_utc.astimezone(user_tz)
-        new_reply=Reply(commentId=commentId,content=replyContent,date=date,repliedBy=userName,repliedTo=repliedTo,postId=postId,userId=userId)
+        user_tz = perth_tz
+        now_user_region = utc_now.astimezone(user_tz)
+        new_reply=Reply(commentId=commentId,content=replyContent,date=now_user_region,repliedBy=userName,repliedTo=repliedTo,postId=postId,userId=userId)
         db.session.add(new_reply)
         db.session.commit()
         return redirect(url_for('views.comment',post_id=postId))
