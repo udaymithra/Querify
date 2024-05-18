@@ -2,8 +2,8 @@ from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
 from .models import Post,Likes,Comments,Reply,CommentsLike
 from .import db
-import datetime
-from pytz import timezone
+from datetime import datetime
+import pytz
 from .models import User,get_user_id
 views=Blueprint('views',__name__)
 from sqlalchemy import func
@@ -170,13 +170,15 @@ def post():
         data=request.form
         title=data.get('title')
         editorContent=data.get('editor')
-        perth_tz = timezone('Australia/Perth')
+        perth_tz = pytz.timezone('Australia/Perth')
+
         # Get the current time in UTC
-        utc_now = datetime.datetime.utcnow()
+        utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
+
 
         # Convert UTC time to user's region time zone
         user_tz = perth_tz
-        now_user_region = utc_now.astimezone(user_tz)
+        now_user_region = utc_now.astimezone(perth_tz)
         new_post=Post(userId=current_user.id, title=title,content=editorContent,date=now_user_region)
         db.session.add(new_post)
         db.session.commit()        
@@ -198,13 +200,15 @@ def comment(post_id):
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
         commentContent=data.get('comment')
-        perth_tz = timezone('Australia/Perth')
+        perth_tz = pytz.timezone('Australia/Perth')
+
         # Get the current time in UTC
-        utc_now = datetime.datetime.utcnow()
+        utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
+
 
         # Convert UTC time to user's region time zone
         user_tz = perth_tz
-        now_user_region = utc_now.astimezone(user_tz)
+        now_user_region = utc_now.astimezone(perth_tz)
         new_comment=Comments(userId=userId,postId=postId,content=commentContent,date=now_user_region)
         db.session.add(new_comment)
         db.session.commit()
@@ -230,12 +234,15 @@ def reply(comment_id):
         replyContent=data.get('replyContent')
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
-        perth_tz = timezone('Australia/Perth')
+        perth_tz = pytz.timezone('Australia/Perth')
+
         # Get the current time in UTC
-        utc_now = datetime.now(timezone('UTC'))
+        utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
+
+
         # Convert UTC time to user's region time zone
         user_tz = perth_tz
-        now_user_region = utc_now.astimezone(user_tz)
+        now_user_region = utc_now.astimezone(perth_tz)
         new_reply=Reply(commentId=commentId,content=replyContent,date=now_user_region,repliedBy=userName,repliedTo=repliedTo,postId=postId,userId=userId)
         db.session.add(new_reply)
         db.session.commit()
