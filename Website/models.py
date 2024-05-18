@@ -15,7 +15,7 @@ class Post(db.Model):
     userId=db.Column(db.Integer, db.ForeignKey('user.id'))
     title=db.Column(db.String(1000))
     content=db.Column(db.Text)
-    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    date=db.Column(db.DateTime(timezone='Australia/Perth'), default=func.date(func.now()))
     
 #creating a User Schema model for storing users information 
 class User(db.Model, UserMixin):
@@ -38,13 +38,13 @@ class Comments(db.Model):
     userId = db.Column(db.Integer)
     postId=db.Column(db.Integer, db.ForeignKey('post.id'))
     content=db.Column(db.Text)
-    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    date=db.Column(db.DateTime(timezone='Australia/Perth'), default=func.date(func.now()))
 #Creating a Reply Schema Model for storing Replies by Users
 class Reply(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
     content=db.Column(db.Text)
-    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    date=db.Column(db.DateTime(timezone='Australia/Perth'), default=func.date(func.now()))
     repliedBy=db.Column(db.Text)
     repliedTo=db.Column(db.Text)
     postId=db.Column(db.Integer)
