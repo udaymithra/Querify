@@ -19,7 +19,7 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
   <script src="{{ url_for('static',filename='Scripts/Profile.js') }}"  defer ></script>
-  <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}"  defer ></script>
+  <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}" defer ></script>
   <title>Querify</title>
 </head>
 
@@ -56,7 +56,7 @@
         <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon" />
       </div>
       <div class="profileDetails">
-        <form action="" method="POST">
+        <form  method="POST">
 
           <div class="profileDetailContainer"><span>First Name</span> <input type="text"
               value="{{ userDetails.firstName }}" name="firstName" readonly> <img class="profileEditButton"
