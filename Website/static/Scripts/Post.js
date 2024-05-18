@@ -5,9 +5,21 @@ const quill = new Quill("#editor", {
   theme: "snow",
 });
 
-// Saving the content pre-submission 
+function isImgElement(element) {
+  return element instanceof Image;
+}
+// Saving the content pre-submission
 function save() {
   const editorContentElement = document.querySelector("#editorContent");
+  document.querySelector("#editor").firstElementChild.querySelectorAll('img').forEach((eachContent)=>{
+
+  const image = eachContent
+
+    if (isImgElement(image) && image) {
+      image.setAttribute("alt", "Post Image"); 
+    }
+  
+  })
   const editorContent =
     document.querySelector("#editor").firstElementChild.innerHTML;
 

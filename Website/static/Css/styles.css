@@ -8,6 +8,7 @@ body{
 
 
     margin: 0px;
+    position: relative;
 }
 header{
     position: sticky;
@@ -15,7 +16,7 @@ header{
     z-index: 3;
 }
 #userName{
-    color: var(--fontColor) !important;
+    color: #f2f4f5 !important;
     text-decoration: none !important;
 }
 .postContent p{
@@ -83,7 +84,7 @@ header{
     border-radius: 10px;
     background-color:#3a3a3a!important;
     padding: 5px 20px;
-    color: var(--fontColor);
+    color: #f2f4f5;
     outline: none;
     cursor: pointer;
     position: absolute;
@@ -104,7 +105,7 @@ header{
     border-radius: 10px;
     background-color:#3a3a3a!important;
     padding: 5px 25px;
-    color: var(--fontColor);
+    color: #f2f4f5;
     outline: none;
     cursor: pointer;
 
@@ -136,7 +137,7 @@ header{
 
     cursor: pointer;
 }
-.replyToComment:hover()
+.replyToComment:hover
 {
     font-weight: bold;
     text-decoration: underline;
@@ -155,7 +156,7 @@ header{
     border-radius: 10px;
     background-color:#3a3a3a!important;
     padding: 5px 20px;
-    color: var(--fontColor);
+    color:#f2f4f5;
     outline: none;
     cursor: pointer;
    
@@ -220,7 +221,7 @@ margin:2px;
 }
 .ql-bubble{
 
-    background-color: var(--fontColor) !important;
+    background-color:#f2f4f5 !important;
     border-radius: 8px !important;
 }
 .commentActionButtons
@@ -238,7 +239,7 @@ margin:2px;
 /* Navigation Container */
 
 .postButton{
-    background:var(--fontColor);
+    background:#f2f4f5;
     border: none;
     border-radius: 5px;;
     padding: 5px 10px;
@@ -246,7 +247,7 @@ margin:2px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--backgroundColor);
+    color: black;
     font-weight: bold;
     gap: 8px;
     cursor: pointer;
@@ -256,7 +257,7 @@ margin:2px;
 }
 .navContainer{
 
-    background:var(--backgroundColor);
+    background: black;
     padding: 15px;
     color:#EFECEC;
     display: flex;
@@ -275,21 +276,37 @@ margin:2px;
     
     cursor: pointer;
 }
+.boxContainer{
+
+    background: black;
+    height: 95vh;
+    display: flex;
+    justify-content: center;
+    justify-content: center;
+    align-items: center;
+
+}
 .box{
 
+    
     display: flex;
     flex-direction: row;
-    background-color: var(--backgroundColor);
-
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    padding: 30px 0px;
 }
 .leftContainer{
 
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--backgroundColor);
-    width: 70%;
-    height: 95vh;
+    background-color: white;
+  
 }
 .rightContainer{
 
@@ -297,9 +314,8 @@ margin:2px;
     justify-content: center;
     align-items: center;
     background-color: inherit;
-    width:30%;
-    background-color: #EFECEC;
-    border-top-left-radius: 10px;;
+    background-color: white;
+   
 
 }
 
@@ -360,7 +376,7 @@ margin:2px;
     border: none;
     padding: 20px;
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;    
   
 }
@@ -474,10 +490,10 @@ h2{
     border: none;
     outline: none;
     border-radius: 8px;
-    background:var(--backgroundColor) ;
+    background: black;
     font-weight: bold;
     cursor: pointer;
-    color: var(--fontColor);
+    color: #f2f4f5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -615,7 +631,7 @@ h2{
     display: flex;
     
     flex-direction: column;
-    color:var(--fontColor);
+    color:#f2f4f5;
     
 }
 .saveProfile{
@@ -740,8 +756,6 @@ h2{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    -webkit-box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
-    -moz-box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
     box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
 }
 .deleteForm form{
@@ -794,6 +808,15 @@ h2{
 
     height: 100vh;
   }
+  .box{
+
+  padding: 0px;
+
+  }
+  .boxContainer{
+    background-color: white;
+    height: 100vh;
+  }
   /* Home UI */
    .rightHeader > *{
     display: none;
@@ -835,7 +858,7 @@ h2{
 
    /* Bottom Mobile Navigation */
    .mobNav{
-
+    margin-top: 50vh;
     background: black;
     display: flex;
     justify-content: space-around;
@@ -853,6 +876,7 @@ h2{
     cursor: pointer;
    }
    .mobSearchBar{
+        margin-top: 50vh;
         width: 100%;
         background: black;
         position: sticky;
