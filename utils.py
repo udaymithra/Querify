@@ -22,4 +22,4 @@ def time_ago(date):
   else:
     return f"{int(weeks)} weeks ago"
 
-# Register the filter with your Flask app (usually in your app factory)
+

@@ -7,7 +7,28 @@ from pytz import timezone
 from .models import User,get_user_id
 views=Blueprint('views',__name__)
 from sqlalchemy import func
+'''
+ Modular Functions for Db operation and Fetching Page Rendering Information 
 
+  1.get_likes_count(all_posts)->Fetches the likes count for each post.
+  2.likes_count_by_id(postId)->Fetches the likes count for specific post.
+  3.update_count_by_id(postId)->Increments the like count for the specific post .
+  4.delete_count_by_id(postId)->Decrements the like count for the specific post.
+  5.get_user_info(fetchRequest)->Fetches the user info for all posts or a specific post depending on the fetch request parameter.
+  6.get_comments_by_id(postId)->Fetches the required information for rendering comments route.
+  7.get_replies_to_comments_by_post_id(postId)->Fetches the replies to the comments for specific post.
+  8.get_user_name_by_user_id(userId)-> Returns the user name of the specific user.
+  9.getCommentedByList(postId)-> Returns the nested list of replies for a comment on a specific post.
+  10.like_count_of_comment_by_id(userId,commentId)->Fetches the like count of a specific comment..
+  11.update_comment_count_by_id(userId,commentId)->Updates the like count for a specific comment.
+  12.delete_comment_count_by_id(userId,commentId)->Decrement the like count for a specific comment.
+  13.get_user_details(userId)->Fetches the users complete information for profile page rendering.
+  14.get_user_id()->Returns the current user id.
+
+
+
+'''
+''' Start :: Modular Function Starts'''
 def get_likes_count(all_posts):
     
     likesCount=[]
@@ -65,11 +86,7 @@ def get_comments_by_post_id(postId):
             commentLikedList.append(0)
         commentLikeCount=CommentsLike.query.filter_by(commentId=comment.id).count()
         commentsLikedCount[comment.id]=commentLikeCount
-
-
     return [commentsInfo,commentLikedList,commentsLikedCount]
-
-
 
 def get_replies_to_comments_by_post_id(postId):
     repliesInfo=dict()
@@ -91,13 +108,9 @@ def getCommentedByList(postId):
         commentedBy.append(user.firstName+" "+user.lastName)
     return commentedBy
 
-'''
- Realtime Like and Dislike Count of Comments!
 
-'''
 def like_count_of_comment_by_id(userId,commentId):
     commentLikeCount=CommentsLike.query.filter_by(commentId=commentId).count()
-    print("commentLikes",commentLikeCount)
     return commentLikeCount
 def update_comment_count_by_id(userId,commentId):
     new_record=CommentsLike(commentId=commentId,userId=userId)
@@ -106,30 +119,23 @@ def update_comment_count_by_id(userId,commentId):
 
 def delete_comment_count_by_id(userId,commentId):
     record = CommentsLike.query.filter_by(commentId=commentId,userId=userId).first()
-    print("In delete section func")
     if record:
         # Only delete if the record exists and belongs to the current user
         db.session.delete(record)
-        print('removed the count')
         db.session.commit()
         return True  # Indicate successful deletion (optional)
     else:
         return False  #
 
-    
-
-''' Profile Section Infor Functions'''
 def get_user_details(userId):
 
     user=User.query.filter_by(id=userId).first()
-
     userDetails=dict()
     userDetails['userId']=userId
     userDetails['firstName']=user.firstName
     userDetails['lastName']=user.lastName
     userDetails['emailAddress']=user.emailAddress
     userDetails['posts']=[]
-    
     posts=Post.query.filter_by(userId=userId).all()
     for post in posts:
         postDetails={}
@@ -137,17 +143,13 @@ def get_user_details(userId):
         postDetails['postTitle']=post.title
         postDetails['postContent']=post.content
         userDetails['posts'].append(postDetails)
-    
-   
     return userDetails
 
+''' End :: Modular Function Ends'''
 
 
-
-
-
-
-
+''' Page Route Handling Begins  '''
+#Home Route 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -160,30 +162,10 @@ def home():
         serverCategory=request.args.get('category')
     
         return render_template('Home.html',message=serverMessage, category=serverCategory)
-'''
-Deletes all functionality (Temp)
-'''
-def delete_all_posts():
-    # Delete all posts using query.delete()
-    db.session.query(Post).delete()
-
-    # Commit the changes to the database
-    db.session.commit()
-    print("All posts deleted successfully!")
-def delete_all_comments():
-    db.session.query(Comments).delete()
-    db.session.commit()
-    print("All COmments deleted")
-
-def delete_all_replies():
-    db.session.query(Reply).delete()
-    db.session.commit()
-    print("All replies deleted successfully!")
-'''Delete all ends here '''
+#Post Route
 @views.route('/post', methods=['POST','GET'])
 @login_required
 def post():
-    print("In post call")
     if request.method == 'POST':
         data=request.form
         title=data.get('title')
@@ -194,17 +176,14 @@ def post():
         now_user_region = now_utc.astimezone(user_tz)
         new_post=Post(userId=current_user.id, title=title,content=editorContent,date=now_user_region)
         db.session.add(new_post)
-        db.session.commit()
-        # delete_all_posts()
-
-        
+        db.session.commit()        
         return redirect(url_for('views.home',message="Post Successful", category=True ))
     return render_template('Post.html')
 
+#Comment Route for a specific post
 @views.route('/comment/<int:post_id>', methods=['POST','GET'])
 @login_required
 def comment(post_id):
-    #delete_all_comments()
     userPostInfo,postDetails=get_user_info(post_id)
     userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
     commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(post_id)
@@ -232,12 +211,10 @@ def comment(post_id):
     return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
 
 
-
+#Reply Route of a comment for a specific post
 @views.route('/comment/reply/<int:comment_id>', methods=['POST'])
 @login_required
-
 def reply(comment_id):
-
 
     if request.method == 'POST':
         data=request.form
@@ -255,8 +232,10 @@ def reply(comment_id):
         db.session.add(new_reply)
         db.session.commit()
         return redirect(url_for('views.comment',post_id=postId))
-    #delete_all_replies()
-    return 'Replying to {}'.format(comment_id)
+    
+    else:
+        return 'Action not allowed'
+#Delete the comment post request
 @views.route('/delete/comment', methods=['POST'])
 @login_required
 def deleteComment():
@@ -274,7 +253,7 @@ def deleteComment():
 
     else:
         return '404 Error', 404
-
+#Delete the reply for the comment
 @views.route('/delete/reply', methods=['POST'])
 @login_required
 def deleteReply():
@@ -292,11 +271,10 @@ def deleteReply():
 
     else:
         return '404 Error', 404
-
+#User Profile Route
 @views.route('/profile', methods=['GET', 'POST'])
 @login_required
 def Profile():
-
     userId=get_user_id()
     userDetails=get_user_details(userId)
     if request.method=='POST':
@@ -310,10 +288,8 @@ def Profile():
             db.session.commit()
         userDetails=get_user_details(userId)
         return render_template('Profile.html',userDetails=userDetails, userPosts=userDetails['posts'] , postsCount=len(userDetails['posts']))
-        
-   
     return render_template('Profile.html',userDetails=userDetails, userPosts=userDetails['posts'] , postsCount=len(userDetails['posts']))
-
+#Post Delete Route
 @views.route('/delete', methods=['POST'])
 @login_required
 def delete():
@@ -327,14 +303,13 @@ def delete():
     db.session.commit()
     
     return redirect('/profile')
-
+#Search query request
 @views.route('/search', methods=['POST'])
 @login_required
 def search():
     if request.method == 'POST':
         data=request.form
         searchQuery=data.get('search')
-        
         userPostInfo,all_posts =get_user_info('all')
         filtered_posts=[]
         filteredPostInfo=[]
@@ -344,8 +319,6 @@ def search():
                 filtered_posts.append(post)
             index=0
         likesCount=get_likes_count(filtered_posts)
-
-        
         for post in filtered_posts:
        
             user=User.query.filter_by(id=post.userId).first()
@@ -355,7 +328,6 @@ def search():
             userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id,'postLiked':record}
             filteredPostInfo.append(userObject)
             index+=1
-            
         return render_template('Home.html', all_posts=filtered_posts,users=filteredPostInfo, postCategory=True)
     else:
         return '404 Not Found',404
