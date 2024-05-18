@@ -119,7 +119,7 @@
                        <img class="commentsDisLikesImg hide" alt="DislikePost" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
                       {% endif %} 
                     <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a>
-                    <span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    <span class="commentDate"> Posted {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
                     
                     
                     {% endif %} 
@@ -159,7 +159,7 @@
                                     </div>  
                                 <div class="replyComment">
                                     {% if current_user.is_authenticated %}
-                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
                                          {% if current_user.id == reply.userId %}
                                          <form method="post" action="/delete/reply">
                                             <input type="hidden" name="replyId" value="{{ reply.id }}">
@@ -187,7 +187,7 @@
              {% endif %}
             {% endfor %}
          {% else %}
-            <span>No comments</span>
+            <span style="display: inline-block;margin-bottom: 50vh;">No comments</span>
          {% endif %}
         
       </div>
