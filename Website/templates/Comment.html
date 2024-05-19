@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
+    <script src="{{ url_for('static',filename='Scripts/main.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/Comment.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}"  defer ></script>
+
+    <title>Querify</title>
+</head>
+<body>
+
+    <header>
+      <nav class="navContainer" >
+        <div class="leftHeader">
+          <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+          <span style="font-size: 18px;;">Querify</span>
+        </div>
+        <div class="rightHeader">
+            <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+              </form>
+          <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}" alt="post button"/>Post</button>
+          {% if current_user.is_authenticated %}
+     
+          <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
+          {% endif %}
+     
+          <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
+          <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
+  
+        </div>
+  
+       
+      </nav>
+    </header>
+    <div class="containerHome">
+
+
+  
+     <div class="postContainer">
+     
+        <div class="postHeader"><img src="{{ url_for('static', filename='Images/User.svg')}}" alt="user profile icon"/> <span>{{ userPostInfo['userFullName'] }}</span></div>
+        <div class="postContentContainer">
+
+          <div class="sideLine"></div>
+          <div class="postContent">
+            <h2>{{ postDetails.title }}</h2>
+            {{ postDetails.content | safe }}
+          
+          </div>
+        </div>
+        
+        <div class="readMore">
+           <button class="read-more">Read More</button>
+        </div>
+        <div class="dateActionContainer">
+          <div class="postActions">
+            {% if userPostInfo['postLiked'] %}
+            <img class="disLikesImg" alt="DislikePost" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+            <img class="likesImg hide" alt="LikePost" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/>
+            {% else %}
+            <img class="disLikesImg hide" alt="DislikePost" style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+            <img class="likesImg" alt="LikePost"  style="margin-left: 30px;" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/>
+            
+            {% endif %}
+            <img class="commentImg" alt="CommentPost" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+          </div>
+          <span class="postedDate">Posted {{ userPostInfo['postedDate'] }}</span>
+          
+        </div>
+        <p class="postLikeCount" style="margin-left: 37px;">{{ userPostInfo['postLikes'] }} likes</p>
+      </div>
+
+      <div id="addCommentContainer">
+            <form  method="POST" > 
+                <div id="editor"></div>
+                <input id="commentContent" type="hidden" value='' name="comment" />
+                <button id="addCommentButton" type="submit" class="hide">Add Comment</button>
+            </form>
+             
+             <div class="commentActionButtons">
+                <button id="discardCommentButton" onclick="window.location.href='/'" type="button"  class=""><img alt="discard" src="{{ url_for('static', filename='images/DiscardRed.svg')}}"></button>
+                <button id="saveCommentButton" onclick="save()" type="button" class="">Save</button>
+                <button id="editCommentButton" onclick="edit()" type="button"  class="hide"><img src="{{ url_for('static', filename='images/Edit.svg')}}" alt="Edit"></button>
+              
+             </div>
+      </div>
+      <div class="commentContainer">
+        <h2>Comments</h2>
+         {% if lengthComments %}
+            {% for comment in commentsList %}
+            
+            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                <div class="userCommented"><img alt="user profile icon" src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
+                <div class="commentContent">
+                    {{ comment.content | safe}}
+                </div>  
+                <div class="replyComment">
+                    {% if current_user.is_authenticated %}
+
+                    <span>
+                      {% if commentLikedList[loop.index-1 ]%}   
+                       <img class="commentsLikesImg hide" alt="DislikePost"  data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg" alt="LikePost" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% else %}
+                       <img class="commentsLikesImg" alt="LikePost" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg hide" alt="DislikePost" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}" src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% endif %} 
+                    <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a>
+                    <span class="commentDate"> Posted {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    
+                    
+                    {% endif %} 
+                </div>
+                <div class="replyCommentLike">
+                    <span>{{ commentsLikedCount[comment.id] }} Likes</span>
+
+                    {% if comment.userId == current_user.id %}
+                    <form method="post" action="/delete/comment">
+                        <input type="hidden" name="commentId" value="{{ comment.id }}">
+                        <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                        <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" alt="DeleteComment"></button>
+                    </form>
+                    {% endif %}
+                
+                
+                </div>
+
+            </div>
+            {% if lengthReplies   %}
+                {% for commentId,replylist in repliesInfo.items() %}
+                    
+                     {% if commentId==comment.id %}
+
+                      {% if replylist %}  
+                         <div class="repliesContainer">
+                          <div class="sideLine"></div>
+
+                          <div class="replies">
+                          {% for reply in replylist %}
+
+                            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}" alt="user profile icon"/>&nbsp;<span>{{ reply.repliedBy }}</span></div>
+                                    <div class="commentContent">
+                                        <p>{{ reply.repliedTo }}</p>
+                                        {{ reply.content | safe}}
+                                    </div>  
+                                <div class="replyComment">
+                                    {% if current_user.is_authenticated %}
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                         {% if current_user.id == reply.userId %}
+                                         <form method="post" action="/delete/reply">
+                                            <input type="hidden" name="replyId" value="{{ reply.id }}">
+                                            <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                                            <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" alt="Delete Reply"></button>
+                                        </form>
+                                          {% endif %}   
+                                    {% endif %}
+                                </div>
+                                
+                
+        
+                            </div>
+
+
+                           {% endfor %}
+                        </div>
+                        </div>
+                      {% endif %}
+
+                    {% endif %}
+                         
+                {%endfor%}
+                   
+             {% endif %}
+            {% endfor %}
+         {% else %}
+            <span style="display: inline-block;margin-bottom: 50vh;">No comments</span>
+         {% endif %}
+        
+      </div>
+      <div id="replyFormContainer" class="hide">
+        <form  action="/comment/reply/" method="POST"  onsubmit="return Reply()"> 
+            <div class="replyto"> <p>@Sai Kiran Patro</p></div>
+            <div id="replyEditor">
+               
+            </div>
+            
+            <input id="replyTo" type="hidden" value="" name="replyTo">
+            <input id='replyToPostId' type="hidden" value="" name="postId">
+            <input id="replyComment" type="hidden" value='' name="replyContent" />
+            <div class="replyButtonContainer">
+                <button id="replyCommentButton" onclick="Reply()" type="submit" >Reply</button>
+            </div>
+            
+        </form>
+        
+      </div>
+
+      <div class="mobSearchBar">
+        <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+        <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
+        </form>
+       </div>
+      <div class="mobNav">
+        <a href="/" ><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+        <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+        <a href="/post" ><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
+        <a href="/profile"><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
+  
+      </div>  
+
+    </div>
+    <div class="errorPopUp" data-message="{{ message }}" data-category="{{ category }}">
+      <div class="errorMessage" >The message</div>
+      <img class="closeLogo" alt="closePopup" src="{{ url_for('static', filename='Images/Close.svg') }}">
+  </div>
+
+ 
+  
+</body>
+
+</html>

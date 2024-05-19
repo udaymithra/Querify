@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"  href="{{ url_for('static', filename='Images/Logo.png') }}" />
+    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet">
+    <script src="{{ url_for('static',filename='Scripts/main.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/Post.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}" defer ></script>
 
 
 
@@ -21,82 +22,77 @@
 <body>
 
     <header>
-         <nav style="background:#0C2D57; padding: 15px;color:#EFECEC;display: flex;justify-content:left;align-items:center;gap:5px;">
-            <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Querify Logo"/>&nbsp;
-            <span style="font-size: 18px;;">Querify</span>
-         </nav>
+      <nav class="navContainer" >
+        <div class="leftHeader">
+          <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+          <span style="font-size: 18px;;">Querify</span>
+        </div>
+        <div class="rightHeader">
+          <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+            <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+          </form>
+          <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}" alt="postButton"/>Post</button>
+          {% if current_user.is_authenticated %}
+     
+          <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
+          {% endif %}
+     
+          <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
+          <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
+  
+        </div>
+  
+       
+      </nav>
     </header>
     
-   <div class="postContainer">
+   <div class="editorContainer">
 
      <form  method="POST" class="postFormContainer">
 
-        <label>
+        <label style="font-size: 24px;color:#0C2D57;font-weight: bold;;" for="title">
             Title
-        </label>
-        <input type="text" name="title"  />
+        </label><br>
+        <input id="title" type="text" name="title" placeholder="Enter title" required />
 
-         <input id="editorContent" type="hidden" value='' name="editor" />
-
-        <div id="editor">
-            <p>Core build with no theme, formatting, non-essential modules</p>
-        </div>
+        <input id="editorContent" type="hidden" value='' name="editor" />
        
-         <input id="submitButton" class="hide" type="submit" value="Submit" />
+        <div id="editor">
+            <p>Type your Query here.</p>
+        </div>
+        
+         <button type="submit" id="submitButton" class="hide" >Submit<img src="{{ url_for('static', filename='Images/Submit.svg') }}" alt="Submit" ></button>
+         
      </form>
-     <button onclick="save()">Save</button>
-   </div>
+     <button id="saveFormButton" onclick="save()">Save<img src="{{ url_for('static', filename='Images/Save.svg') }}" alt="Save" ></button>
+     <button id="discardFormButton" onclick="window.location.href='/'" ><img src="{{ url_for('static', filename='Images/Discard.svg') }}" alt="Discard"> Discard</button>
+     <button id="editFormButton" onclick="edit()" class="hide" ><img src="{{ url_for('static', filename='Images/Edit.svg') }}" alt="Edit" > Edit</button>
+    </div>
+    <div class="containerHome">
+      <div class="mobSearchBar">
+        <img id="backMob" src="{{ url_for('static', filename='Images/Mobile/Back.svg')}}" alt="Back">
+        <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search">
+          <button class="btn btn-sm btn-info my-2 my-sm-0" type="submit"><img src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search"></button>
+        </form>
+       </div>
+      <div class="mobNav">
+        <a href="/" ><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
+        <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+        <a href="/post" ><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
+        <a href="/profile" ><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
+  
+      </div>  
+    </div>
 
-    <div class="errorPopUp">
+    <div class="errorPopUp" data-message="{{ message }}" data-category="{{ category }}">
       <div class="errorMessage" >The message</div>
-      <img class="closeLogo" src="{{ url_for('static', filename='Images/Close.svg') }}">
+      <img class="closeLogo" alt="closePopup" src="{{ url_for('static', filename='Images/Close.svg') }}">
   </div>
 
  
   
 </body>
-<script>
 
-let message= '{{ message }}'
-let category= '{{ category }}'
-console.log(category)
-const popUp=document.querySelector('.errorPopUp')
-if(category=='False'){
-  
- 
-  popUp.style.top='5%';
-  popUp.style.display='flex';
-  document.querySelector('.errorMessage').innerHTML=message;
-  }
-else if(category=='True'){
-  popUp.style.top='5%';
-  popUp.style.background='#C6EBC5'
-  popUp.style.display='flex';
-  document.querySelector('.errorMessage').innerHTML=message;
-  document.querySelector('.errorMessage').style.color='#76885B'
-}
-  document.querySelector('.closeLogo').addEventListener("click",()=>{
-    popUp.style.display='none'
-
-  })
-
-  const quill = new Quill('#editor',{
-    modules:{
-        toolbar:true
-    },
-    theme:"snow"
-  });
-
-
-  function save(){
-
-    const editorContent=document.querySelector('#editorContent');
-    editorContent.value=document.querySelector('#editor').firstElementChild.innerHTML;
-    console.log(editorContent.value)
-    document.querySelector('#submitButton').setAttribute('class','visibleBlock')
-
-  
-  
-  }
-</script>
 </html>

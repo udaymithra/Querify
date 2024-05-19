@@ -1,3 +1,4 @@
+
 from . import db   
 from flask_login import UserMixin
 from sqlalchemy.sql import func  #for fetching the current timestamp for posting 
@@ -54,9 +55,3 @@ class CommentsLike(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
     userId=db.Column(db.Integer)
-    
-    
-
-
-    
-

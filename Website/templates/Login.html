@@ -3,26 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"  href="{{ url_for('static', filename='Images/Logo.png') }}" />
+    <link rel="icon"  href="{{ url_for('static', filename='Images/favicon.ico') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static',filename='Scripts/main.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/Login.js') }}"  defer ></script>
     <title>Querify</title>
 </head>
 <body>
 
     <header>
-         <nav style="background:#0C2D57; padding: 15px;color:#EFECEC;display: flex;justify-content:left;align-items:center;gap:5px;">
-            <img src="{{ url_for('static', filename='Images/Logo.png') }}" alt="Querify Logo"/>&nbsp;
+         <nav style="background:black; padding: 15px;color:#EFECEC;display: flex;justify-content:left;align-items:center;gap:5px;">
+            <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
             <span style="font-size: 18px;;">Querify</span>
          </nav>
     </header>
-    <div class="box">
+    <div class="boxContainer">
+
+
+ 
+         <div class="box">
                <div class="leftContainer">
-                    <img src="{{ url_for('static', filename='Images/homeImg.svg') }}" alt="Home" />
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                  <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                  </ol>
+                  <div class="carousel-inner">
+                    <div class="carousel-item active">
+                      <img class="d-block w-100" src="{{ url_for('static',filename='Images/Intro/Screen1.png')}}" alt="Screen 1">
+                    </div>
+                    <div class="carousel-item">
+                      <img class="d-block w-100" src="{{ url_for('static',filename='Images/Intro/Screen2.png')}}" alt="Screen 2">
+                    </div>
+                    <div class="carousel-item">
+                      <img class="d-block w-100" src="{{ url_for('static',filename='Images/Intro/Screen3.png')}}" alt="Screen 3">
+                    </div>
+                    <div class="carousel-item">
+                      <img class="d-block w-100" src="{{ url_for('static',filename='Images/Intro/Screen4.png')}}" alt="Screen 4">
+                    </div>
+                  </div>
+                  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </div>
                </div>
                <div class="rightContainer">
                 <form   method="POST" >
@@ -34,45 +67,23 @@
                     <div class="form-group">
                       <label for="exampleInputPassword1">Password</label>
                       <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
+                      <img id="eyeOpen" src="{{ url_for('static', filename='Images/Eye.svg') }}" alt="Show Password">
+                      <img id="eyeClose" class="hide" src="{{ url_for('static', filename='Images/EyeClose.svg') }}" alt="Hide Password">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:260px;background-color: #FC6736;color:#0C2D57;font-weight: bold;text-align: center; border:2px solid #0C2D57">Submit</button>
-                    <br><br><span>Don't have an account?</span>&nbsp;<a href="/signup" style="text-decoration:none;color:#FC6736;font-weight: bold;">Sign Up</a>
+                    <button type="submit" class="btn btn-primary" style="width:260px;background-color: black;color:white;font-weight: bold;text-align: center; border:2px solid #0C2D57">Submit</button>
+                    <br><br><span>Don't have an account?</span>&nbsp;<a href="/signup" style="text-decoration:none;color:#0a0a0a;font-weight: bold;">Sign Up</a>
                 </form>
                </div>
     </div>
-    <div class="errorPopUp">
-      <div class="errorMessage" >The message</div>
-      <img class="closeLogo" src="{{ url_for('static', filename='Images/Close.svg') }}">
+  </div>
+    <!-- Error Pop UP  -->
+    <div class="errorPopUp" data-message="{{ message }}" data-category="{{ category }}">
+      <div class="errorMessage" ></div>
+      <img class="closeLogo" alt="closePopup" src="{{ url_for('static', filename='Images/Close.svg') }}">
   </div>
 
  
   
 </body>
-<script>
 
-let message= '{{ message }}'
-let category= '{{ category }}'
-console.log(category)
-const popUp=document.querySelector('.errorPopUp')
-if(category=='False'){
-  
- 
-  popUp.style.top='5%';
-  popUp.style.display='flex';
-  document.querySelector('.errorMessage').innerHTML=message;
-  }
-else if(category=='True'){
-  popUp.style.top='5%';
-  popUp.style.background='#C6EBC5'
-  popUp.style.display='flex';
-  document.querySelector('.errorMessage').innerHTML=message;
-  document.querySelector('.errorMessage').style.color='#76885B'
-}
-  document.querySelector('.closeLogo').addEventListener("click",()=>{
-    popUp.style.display='none'
-
-  })
-
-
-</script>
 </html>

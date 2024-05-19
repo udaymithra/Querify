@@ -37,9 +37,9 @@ def create_app():
     from .views import likes_count_by_id,update_count_by_id,delete_count_by_id,like_count_of_comment_by_id,update_comment_count_by_id,delete_comment_count_by_id
     # Create tables outside the context for reliable execution
     with app.app_context():
+        # Creating a Database
         db.create_all()
-        print("--- Creating....->")
-        print("Database tables created successfully!")
+        
     login_manager = LoginManager()
     login_manager.login_view='auth.login'
     login_manager.init_app(app)
@@ -69,7 +69,6 @@ def create_app():
     def like_update_comment_count(data):
         user_id = data.get('user_id') 
         comment_id=data.get('comment_id')
-        print("CommentId",comment_id)
         new_count = like_count_of_comment_by_id(user_id,comment_id) + 1  # Example increment
         update_comment_count_by_id(user_id,comment_id)
         socketio.emit('like_update_comment_count', {'comment_id':comment_id , 'count': new_count})
@@ -78,7 +77,6 @@ def create_app():
     def dislike_update_comment_count(data):
         user_id = data.get('user_id') 
         comment_id=data.get('comment_id')
-        print("In Dislike Comment Func")
         deleted=delete_comment_count_by_id(user_id,comment_id)
         if deleted:
             new_count=like_count_of_comment_by_id(user_id,comment_id)
