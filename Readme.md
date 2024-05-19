@@ -31,11 +31,12 @@ Password Toggling: Switch between showing and hiding your password for added sec
 
 2.Group-member details
 
-UWA ID	        Name	                    Github User Name
-23872782	Shanmugapriya Sankarraj	        Sem3group
-23858856	Udaymithra Kalla	            udaymithra
-23870369	Dharani Kumari Nagali	        dharaninagala
-23832048	Gnaneshwar Reddy Bana	        gnaneshwarbana
+| UWA ID    | Name                   | Github User Name |
+|-----------|------------------------|------------------|
+| 23872782  | Shanmugapriya Sankarraj| Sem3group        |
+| 23858856  | Udaymithra Kalla       | udaymithra       |
+| 23870369  | Dharani Kumari Nagali  | dharaninagala    |
+| 23832048  | Gnaneshwar Reddy Bana  | gnaneshwarbana   |
 
 
 
